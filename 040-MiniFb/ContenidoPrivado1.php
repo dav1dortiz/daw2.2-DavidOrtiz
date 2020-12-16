@@ -1,16 +1,15 @@
 <?php
-
 require_once "_Varios.php";
-
 // TODO Hay que comprobar si hay sesión-usuario iniciada.
 //   - Si la hay, no intervenimos. Dejamos que la pág se cargue.
 //     (Mostrar info del usuario logueado y tal...)
 //   - Si NO la hay, redirigimos a SesionInicioMostrarFormulario.php
 // (Organizar estas comprobaciones en funciones en _Varios.php para evitar copypaste.)
-
-if (!haySesionIniciada()) {
-    // TODO Redirigir...
+if (!haySesionIniciada() && !intentarCanjearSesionCookie()) {
+    redireccionar("SesionInicioMostrarFormulario.php");
 }
+
+
 
 ?>
 
@@ -20,6 +19,12 @@ if (!haySesionIniciada()) {
 
 <head>
     <meta charset='UTF-8'>
+    <?php
+    if($_COOKIE["identificador"] && $_COOKIE["codigoCookie"]){?>
+        <p>Hola, <?=$_COOKIE["identificador"] ?> <a href='SesionCerrar.php'>(Cerrar Sesión)</a></p>
+        <?php
+    }
+    ?>
 </head>
 
 
@@ -33,12 +38,8 @@ if (!haySesionIniciada()) {
 <p>Aenean tempus risus elementum lacus dictum pellentesque. Curabitur dapibus laoreet consectetur. Nullam at velit vestibulum, viverra elit nec, pretium ex. In hac habitasse platea dictumst. Cras quis ex in est tristique elementum vel pretium ligula. Donec malesuada, felis vel pharetra ullamcorper, lorem est porttitor est, congue fringilla neque magna eget mi. Donec efficitur massa dolor, id interdum odio scelerisque vitae. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur mattis porta odio eget fermentum. Integer faucibus libero diam, nec rhoncus nisl cursus ac. Donec massa mi, aliquam a libero quis, dictum hendrerit dolor. Duis scelerisque mauris in nibh lacinia, at tristique lorem pharetra. Ut egestas quam ac ligula aliquam, a ullamcorper tellus lobortis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec gravida ex sit amet tincidunt efficitur. Praesent at egestas felis.</p>
 
 <a href='ContenidoPublico1.php'>Ir al Contenido Público 1</a>
-<br>
-<br>
+
 <a href='ContenidoPrivado2.php'>Ir al Contenido Privado 2</a>
-<br>
-<br>
-<a href='SesionCerrar.php'>Cerrar Sesión</a>
 
 </body>
 
