@@ -39,6 +39,10 @@ class Categoria extends Dato implements JsonSerializable
             "id" => $this->id,
         ];
 
+        // Esto sería lo mismo:
+        //$array["nombre"] = $this->nombre;
+        //$array["id"] = $this->id;
+        //return $array;
     }
 
     public function getNombre(): string
@@ -59,20 +63,43 @@ class Categoria extends Dato implements JsonSerializable
     }
 }
 
-class Persona extends Dato
+class Persona extends Dato implements JsonSerializable
 {
     use Identificable;
 
     private string $nombre;
     private string $apellidos;
     // ...
-    private int $categoriaId;
-    private Categoria $categoria;
+    private int $personaId;
+    private Persona $persona;
 
-    public function obtenerCategoria(): Categoria
+    public function jsonSerialize()
     {
-        if ($this->categoria == null) $categoria = DAO::categoriaObtenerPorId($this->categoriaId);
+        return [
+            "nombre" => $this->nombre,
+            "id" => $this->id,
+        ];
 
-        return $categoria;
+        // Esto sería lo mismo:
+        //$array["nombre"] = $this->nombre;
+        //$array["id"] = $this->id;
+        //return $array;
+    }
+
+    public function getNombre(): string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre)
+    {
+        $this->nombre = $nombre;
+    }
+
+    public function obtenerPersonasPertenecientes(): array
+    {
+        if ($this->personasPertenecientes == null) $personasPertenecientes = DAO::personaObtenerPorCategoria($this->id);
+
+        return $personasPertenecientes;
     }
 }

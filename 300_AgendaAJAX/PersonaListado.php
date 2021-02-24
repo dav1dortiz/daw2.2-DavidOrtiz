@@ -1,7 +1,7 @@
 <?php
 require_once "_com/Varios.php";
 
-$conexionBD = obtenerPdoConexionBD();
+$conexion = obtenerPdoConexionBD();
 
 session_start(); // Crear post-it vacío, o recuperar el que ya haya  (vacío o con cosas).
 if (isset($_REQUEST["soloEstrellas"])) {
@@ -28,7 +28,7 @@ $sql = "
                 ORDER BY p.nombre
             ";
 
-$select = $conexionBD->prepare($sql);
+$select = $conexion->prepare($sql);
 $select->execute([]); // Array vacío porque la consulta preparada no requiere parámetros.
 $rs = $select->fetchAll();
 
@@ -75,7 +75,7 @@ $rs = $select->fetchAll();
                 echo "</a>";
                 ?>
             </td>
-            <td><a href= 'CategoriaFicha.php?id=<?=$fila["cId"]?>'> <?= $fila["cNombre"] ?> </a></td>
+            <td><a href= 'zzCategoriaFicha.php?id=<?=$fila["cId"]?>'> <?= $fila["cNombre"] ?> </a></td>
             <td><a href='PersonaEliminar.php?id=<?=$fila["pId"]?>'> (X)                      </a></td>
         </tr>
     <?php } ?>
