@@ -6,7 +6,7 @@ abstract class Dato
 
 trait Identificable
 {
-    protected int $id;
+    protected  $id;
 
     public function getId(): int
     {
@@ -23,8 +23,8 @@ class Categoria extends Dato implements JsonSerializable
 {
     use Identificable;
 
-    private string $nombre;
-    private array $personasPertenecientes;
+    private  $nombre;
+    private  $personasPertenecientes;
 
     public function __construct(int $id, string $nombre)
     {
@@ -39,10 +39,6 @@ class Categoria extends Dato implements JsonSerializable
             "id" => $this->id,
         ];
 
-        // Esto sería lo mismo:
-        //$array["nombre"] = $this->nombre;
-        //$array["id"] = $this->id;
-        //return $array;
     }
 
     public function getNombre(): string
@@ -67,23 +63,43 @@ class Persona extends Dato implements JsonSerializable
 {
     use Identificable;
 
-    private string $nombre;
-    private string $apellidos;
-    // ...
-    private int $personaId;
-    private Persona $persona;
+    private  $nombre;
+    private  $apellidos;
+    private  $telefono;
+    private  $categoriaId;
+    private  $categoria;
+    private  $estrella;
+
+    public function obtenerCategoria(): Categoria
+    {
+        if ($this->categoria == null) $categoria = DAO::categoriaObtenerPorId($this->categoriaId);
+
+        return $categoria;
+    }
+
+    public function __construct($id, $nombre, $apellidos, $telefono,$categoriaId, $estrella)
+    {
+        $this->setId($id);
+        $this->setNombre($nombre);
+        $this->setApellidos($apellidos);
+        $this->setTelefono($telefono);
+        //$this->setCategoriaId($categoriaId);
+        $this->setCategoria($categoriaId);
+        $this->setEstrella($estrella);
+    }
 
     public function jsonSerialize()
     {
         return [
-            "nombre" => $this->nombre,
             "id" => $this->id,
+            "nombre" => $this->nombre,
+            "apellidos" => $this->apellidos,
+            "telefono" => $this->telefono,
+            "categoriaId" => $this->categoriaId,
+            "categoria" => $this->categoria,
+            "estrella" => $this->estrella
         ];
 
-        // Esto sería lo mismo:
-        //$array["nombre"] = $this->nombre;
-        //$array["id"] = $this->id;
-        //return $array;
     }
 
     public function getNombre(): string
@@ -95,11 +111,49 @@ class Persona extends Dato implements JsonSerializable
     {
         $this->nombre = $nombre;
     }
-
-    public function obtenerPersonasPertenecientes(): array
+    public function getApellidos(): string
     {
-        if ($this->personasPertenecientes == null) $personasPertenecientes = DAO::personaObtenerPorCategoria($this->id);
-
-        return $personasPertenecientes;
+        return $this->apellidos;
     }
+    public function setApellidos(string $apellidos)
+    {
+        $this->apellidos = $apellidos;
+    }
+
+    public function getTelefono(): int
+    {
+        return $this->telefono;
+    }
+    public function setTelefono(int $telefono)
+    {
+        $this->telefono = $telefono;
+    }
+
+    public function getCategoriaId(): int
+    {
+        $this->obtenerCategoria();
+    }
+    public function setCategoriaId(int $categoria)
+    {
+        $this->categoria = $categoria;
+    }
+
+    public function getEstrella(): bool
+    {
+        return $this->estrella;
+    }
+    public function setEstrella(bool $estrella)
+    {
+        $this->estrella = $estrella;
+    }
+
+    public function getCategoria(): Categoria
+    {
+        return $this->obtenerCategoria();
+    }
+    public function setCategoria(int $categoriaId)
+    {
+        $this->categoria = $categoriaId;
+    }
+
 }

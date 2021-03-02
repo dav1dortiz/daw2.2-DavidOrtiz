@@ -1,7 +1,7 @@
 <?php
 require_once "_com/Varios.php";
 
-$conexionBD = obtenerPdoConexionBD();
+$conexion = obtenerPdoConexionBD();
 
 // Se recoge el parámetro "id" de la request.
 $id = (int)$_REQUEST["id"];
@@ -16,7 +16,7 @@ if ($nuevaEntrada) { // Quieren CREAR una nueva entrada, así que no se cargan d
 } else { // Quieren VER la ficha de una categoría existente, cuyos datos se cargan.
     $sql = "SELECT nombre FROM Categoria WHERE id=?";
 
-    $select = $conexionBD->prepare($sql);
+    $select = $conexion->prepare($sql);
     $select->execute([$id]); // Se añade el parámetro a la consulta preparada.
     $rs = $select->fetchAll();
 
@@ -28,7 +28,7 @@ if ($nuevaEntrada) { // Quieren CREAR una nueva entrada, así que no se cargan d
 
 $sql = "SELECT * FROM Persona WHERE categoriaId=? ORDER BY nombre";
 
-$select = $conexionBD->prepare($sql);
+$select = $conexion->prepare($sql);
 $select->execute([$id]); // Array vacío porque la consulta preparada no requiere parámetros.
 $rsPersonasDeLaCategoria = $select->fetchAll();
 

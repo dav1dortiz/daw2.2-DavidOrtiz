@@ -20,3 +20,28 @@
     width: 100%;
     border: none;
 }
+
+/***************************/
+
+#personasTabla > div {
+    display: table;
+    width: 420px;
+}
+
+#personasTabla > div > div {
+    display: table-row;
+    width: 100%;
+}
+
+#personasTabla > div > div > div {
+    display: table-cell;
+    text-align: center;
+    border: 1px solid silver;
+    width: 20%;
+    padding: 1px;
+}
+
+#personasTabla > div > div > div > input {
+    width: 100%;
+    border: none;
+}

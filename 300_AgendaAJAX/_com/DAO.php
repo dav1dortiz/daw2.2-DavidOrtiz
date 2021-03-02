@@ -1,7 +1,7 @@
 <?php
 
-require_once "Clases.php";
-require_once "Varios.php";
+require_once "_com/Clases.php";
+require_once "_com/Varios.php";
 
 class DAO
 {
@@ -12,7 +12,7 @@ class DAO
         $servidor = "localhost";
         $identificador = "root";
         $contrasenna = "";
-        $bd = "Agenda"; // Schema
+        $bd = "agenda"; // Schema
         $opciones = [
             PDO::ATTR_EMULATE_PREPARES => false, // Modo emulación desactivado para prepared statements "reales"
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Que los errores salgan como excepciones.
@@ -39,7 +39,6 @@ class DAO
 
         return $rs;
     }
-
     // Devuelve:
     //   - null: si ha habido un error
     //   - int: el id autogenerado para el nuevo registro.
@@ -90,25 +89,11 @@ class DAO
         return new Categoria($fila["id"], $fila["nombre"]);
     }
 
-    public static function categoriaObtenerPorId(int $id): ?Categoria
-    {
-        $rs = self::ejecutarConsulta(
-            "SELECT * FROM Categoria WHERE id=?",
-            [$id]
-        );
-
-        if ($rs) return self::categoriaCrearDesdeRs($rs[0]);
-        else return null;
-    }
-
     public static function categoriaObtenerTodas(): array
     {
         $datos = [];
 
-        $rs = self::ejecutarConsulta(
-            "SELECT * FROM Categoria ORDER BY nombre",
-            []
-        );
+        $rs = self::ejecutarConsulta("SELECT * FROM categoria ORDER BY nombre",[]);
 
         foreach ($rs as $fila) {
             $categoria = self::categoriaCrearDesdeRs($fila);
@@ -120,10 +105,7 @@ class DAO
 
     public static function categoriaCrear(string $nombre): ?Categoria
     {
-        $idAutogenerado = self::ejecutarInsert(
-            "INSERT INTO Categoria (nombre) VALUES (?)",
-            [$nombre]
-        );
+        $idAutogenerado = self::ejecutarInsert("INSERT INTO categoria (nombre) VALUES (?)", [$nombre]);
 
         if ($idAutogenerado == null) return null;
         else return self::categoriaObtenerPorId($idAutogenerado);
@@ -131,10 +113,8 @@ class DAO
 
     public static function categoriaActualizar(Categoria $categoria): ?Categoria
     {
-        $filasAfectadas = self::ejecutarUpdate(
-            "UPDATE Categoria SET nombre=? WHERE id=?",
-            [$categoria->getNombre(), $categoria->getId()]
-        );
+        $filasAfectadas = self::ejecutarUpdate("UPDATE categoria SET nombre=? WHERE id=?",
+            [$categoria->getNombre(), $categoria->getId()]);
 
         if ($filasAfectadas = null) return null;
         else return $categoria;
@@ -142,10 +122,7 @@ class DAO
 
     public static function categoriaEliminarPorId(int $id): bool
     {
-        $filasAfectadas = self::ejecutarUpdate(
-            "DELETE FROM Categoria WHERE id=?",
-            [$id]
-        );
+        $filasAfectadas = self::ejecutarUpdate("DELETE FROM categoria WHERE id=?", [$id]);
 
         return ($filasAfectadas == 1);
     }
@@ -155,19 +132,17 @@ class DAO
         return self::categoriaEliminarPorId($categoria->id);
     }
 
-    /*PERSONAS*/
+    /* PERSONA */
 
     private static function personaCrearDesdeRs(array $fila): Persona
     {
-        return new Persona($fila["id"], $fila["nombre"]);
+        return new Persona($fila["id"], $fila["nombre"], $fila["apellidos"], $fila["telefono"],
+            $fila["categoriaId"], $fila["estrella"]);
     }
 
     public static function personaObtenerPorId(int $id): ?Persona
     {
-        $rs = self::ejecutarConsulta(
-            "SELECT * FROM Persona WHERE id=?",
-            [$id]
-        );
+        $rs = self::ejecutarConsulta("SELECT * FROM persona WHERE id=?", [$id]);
 
         if ($rs) return self::personaCrearDesdeRs($rs[0]);
         else return null;
@@ -177,10 +152,7 @@ class DAO
     {
         $datos = [];
 
-        $rs = self::ejecutarConsulta(
-            "SELECT * FROM Persona ORDER BY nombre",
-            []
-        );
+        $rs = self::ejecutarConsulta("SELECT * FROM persona ORDER BY nombre", []);
 
         foreach ($rs as $fila) {
             $persona = self::personaCrearDesdeRs($fila);
@@ -189,12 +161,13 @@ class DAO
 
         return $datos;
     }
-
-    public static function personaCrear(string $nombre): ?Persona
+    //bool $estrella --> probar a meter este parametro
+    //string $apellidos, int $telefono, int $categoriaId
+    public static function personaCrear(string $nombre, string $apellidos, int $telefono, int $categoriaId): ?Persona
     {
         $idAutogenerado = self::ejecutarInsert(
-            "INSERT INTO Persona (nombre) VALUES (?)",
-            [$nombre]
+            "INSERT INTO persona (nombre,apellidos,telefono,categoriaId) VALUES (?,?,?,?)",
+            [$nombre,$apellidos,$telefono,$categoriaId]
         );
 
         if ($idAutogenerado == null) return null;
@@ -204,18 +177,20 @@ class DAO
     public static function personaActualizar(Persona $persona): ?Persona
     {
         $filasAfectadas = self::ejecutarUpdate(
-            "UPDATE Persona SET nombre=? WHERE id=?",
-            [$persona->getNombre(), $persona->getId()]
+            "UPDATE persona SET nombre=?, apellidos=?, telefono=?, categoriaId=? WHERE id=?",
+            [$persona->getNombre(), $persona->getApellidos(), $persona->getTelefono(),
+                $persona->getCategoriaId(), $persona->getId()]
         );
 
         if ($filasAfectadas = null) return null;
         else return $persona;
     }
+    /* ??? CREAR personaActualizarNombre, personaActualizarApellido...*/
 
     public static function personaEliminarPorId(int $id): bool
     {
         $filasAfectadas = self::ejecutarUpdate(
-            "DELETE FROM Persona WHERE id=?",
+            "DELETE FROM persona WHERE id=?",
             [$id]
         );
 
@@ -227,7 +202,3 @@ class DAO
         return self::personaEliminarPorId($persona->id);
     }
 }
-
-
-
-
